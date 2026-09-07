@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080c20">
+  <title>ICT EXPO 2026 | Countdown</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100svh;
+      display: flex; flex-direction: column;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #f6f8ff; text-align: center; background: #080c20;
+      background-image: radial-gradient(ellipse at 15% 20%, #16456880, transparent 55%),
+                        radial-gradient(ellipse at 90% 75%, #60259960, transparent 55%);
+    }
+    main { flex: 1; display: grid; place-items: center; padding: 48px 20px; }
+    .expo { width: min(100%, 900px); }
+    .badge {
+      display: inline-block; padding: 9px 17px; border: 1px solid #6de8ff55;
+      border-radius: 30px; color: #91efff; font-size: .75rem;
+      font-weight: 700; letter-spacing: .18em;
+    }
+    h1 { font-size: clamp(2.6rem, 9vw, 6rem); line-height: 1.05; margin: 28px 0 18px; letter-spacing: -.045em; }
+    h1 span { color: #7de8ff; }
+    .intro { color: #bdc8e0; font-size: clamp(1rem, 3vw, 1.2rem); margin: 0 0 30px; }
+    .date { color: #d6dff3; line-height: 1.8; }
+    .date small { color: #9fadc9; }
+    .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 35px 0; }
+    .unit {
+      padding: 30px 10px; border: 1px solid #a8c8ff30; border-radius: 22px;
+      background: linear-gradient(145deg, #ffffff0e, #ffffff04);
+      box-shadow: 0 14px 40px #00000020;
+    }
+    .number { display: block; font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 750; line-height: 1.2; font-variant-numeric: tabular-nums; }
+    .label { display: block; margin-top: 12px; font-size: .7rem; letter-spacing: .17em; color: #b7c8e7; text-transform: uppercase; }
+    #status { color: #8beaff; font-size: .9rem; letter-spacing: .08em; }
+    #welcome { margin: 35px 0; padding: 35px 18px; border: 1px solid #72e9ff60; border-radius: 24px; background: #51d8ff0b; }
+    #welcome h2 { color: #98f1ff; font-size: clamp(2rem, 7vw, 4rem); margin: 0; line-height: 1.2; }
+    #welcome p { color: #d6dff3; margin-bottom: 0; }
+    [hidden] { display: none !important; }
+    footer { padding: 24px 20px; color: #a7b5d1; font-size: .8rem; line-height: 1.8; border-top: 1px solid #ffffff12; }
+    footer strong { color: #8beaff; }
+    @media (max-width: 520px) {
+      main { padding: 36px 18px; }
+      .countdown { grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 26px 0; }
+      .unit { padding: 22px 10px; border-radius: 18px; }
+      .number { font-size: 3.2rem; }
+    }
+    body { overflow-x: hidden; isolation: isolate; }
+    main, footer { position: relative; z-index: 1; }
+    .ambience { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
+    .orb { position: absolute; width: 65vmax; height: 65vmax; border-radius: 50%; opacity: .3; animation: drift 18s ease-in-out infinite alternate; }
+    .orb:first-child { left: -35vmax; top: -25vmax; background: radial-gradient(circle, #159dc2, transparent 65%); }
+    .orb:nth-child(2) { right: -35vmax; bottom: -30vmax; background: radial-gradient(circle, #a13bdb, transparent 65%); animation-delay: -9s; }
+    .particle { position: absolute; bottom: -20px; left: var(--x); width: var(--size); height: var(--size); border-radius: 50%; background: #83edff; box-shadow: 0 0 12px #83edff; opacity: 0; animation: float-up var(--duration) linear var(--delay) infinite; }
+    .expo { animation: arrive 1s ease-out both; }
+    .badge { animation: beacon 4s ease-in-out infinite; }
+    h1 span { background: linear-gradient(110deg, #7de8ff 20%, #fff 45%, #c297ff 60%, #7de8ff 80%); background-size: 250% auto; background-clip: text; -webkit-background-clip: text; color: transparent; animation: shimmer 7s linear infinite; }
+    .unit { position: relative; overflow: hidden; animation: breathe 5s ease-in-out infinite; transition: transform .3s ease, border-color .3s ease; }
+    .unit:nth-child(2) { animation-delay: -.7s; }
+    .unit:nth-child(3) { animation-delay: -1.4s; }
+    .unit:nth-child(4) { animation-delay: -2.1s; }
+    .unit::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 35%, #ffffff10 50%, transparent 65%); transform: translateX(-150%); animation: sweep 8s ease-in-out infinite; }
+    .number.tick { animation: tick .38s ease-out; }
+    #welcome:not([hidden]) { animation: welcome-in .9s cubic-bezier(.2,.8,.2,1) both, breathe 5s 1s ease-in-out infinite; }
+    #welcome h2 { text-shadow: 0 0 28px #56dfff55; }
+    .confetti { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+    .confetti i { position: absolute; top: -24px; left: var(--x); width: 8px; height: 14px; background: var(--color); animation: confetti-fall var(--duration) var(--delay) linear both; }
+    @media (hover: hover) { .unit:hover { transform: translateY(-6px); border-color: #7de8ff99; } }
+    @keyframes drift { to { transform: translate(12vw, 12vh) scale(1.15); } }
+    @keyframes float-up { 10% { opacity: .5; } 85% { opacity: .35; } to { transform: translate(40px, -110vh); opacity: 0; } }
+    @keyframes arrive { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes beacon { 50% { box-shadow: 0 0 25px #4ce0ff25; border-color: #6de8ffaa; } }
+    @keyframes shimmer { to { background-position: -250% center; } }
+    @keyframes breathe { 50% { box-shadow: 0 0 30px #63dbff1c; border-color: #9bdfff65; } }
+    @keyframes sweep { 0%, 65% { transform: translateX(-150%); } 100% { transform: translateX(150%); } }
+    @keyframes tick { from { opacity: .4; transform: translateY(9px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes welcome-in { from { opacity: 0; transform: scale(.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes confetti-fall { to { transform: translate(var(--sway), 110vh) rotate(720deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .particle, .confetti { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambience" aria-hidden="true"><div class="orb"></div><div class="orb"></div></div>
+  <main>
+    <section class="expo" aria-labelledby="title">
+      <div class="badge">INNOVATE · CREATE · INSPIRE</div>
+      <h1 id="title">ICT EXPO <span>2026</span></h1>
+      <p class="intro">The countdown to a world of possibilities.</p>
+      <p class="date">
+        <time datetime="2026-09-08T09:00:00+05:30">Tuesday, 8 September 2026 · 9:00 AM</time><br>
+        <small>Sri Lanka Time (UTC+05:30)</small>
+      </p>
+      <div id="countdown" class="countdown" role="timer" aria-label="Time remaining until ICT EXPO 2026" aria-live="off">
+        <div class="unit"><span class="number" id="days">00</span><span class="label">Days</span></div>
+        <div class="unit"><span class="number" id="hours">00</span><span class="label">Hours</span></div>
+        <div class="unit"><span class="number" id="minutes">00</span><span class="label">Minutes</span></div>
+        <div class="unit"><span class="number" id="seconds">00</span><span class="label">Seconds</span></div>
+      </div>
+      <p id="status">COUNTING DOWN TO THE EXPO</p>
+      <div id="announcement" role="status" aria-live="polite" aria-atomic="true">
+        <div id="welcome" hidden>
+          <h2>WELCOME TO THE EXPO</h2>
+          <p>ICT EXPO 2026 has begun. Let the inspiration begin!</p>
+        </div>
+      </div>
+      <noscript><p>Please enable JavaScript to display the live countdown.</p></noscript>
+    </section>
+  </main>
+  <footer>Developed by <strong>Hirunthakan</strong> for ICT EXPO 2K26</footer>
+  <script>
+    // Fixed Sri Lanka time: independent of the visitor's time zone.
+    const target = new Date("2026-09-08T09:00:00+05:30").getTime();
+    const fields = ["days", "hours", "minutes", "seconds"].map(id => document.getElementById(id));
+    let timer;
+    let celebrated = false;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const ambience = document.querySelector(".ambience");
+    for (let i = 0; i < 22; i++) {
+      const dot = document.createElement("span");
+      dot.className = "particle";
+      dot.style.cssText = `--x:${Math.random() * 100}%;--size:${2 + Math.random() * 3}px;--duration:${12 + Math.random() * 16}s;--delay:-${Math.random() * 28}s`;
+      ambience.appendChild(dot);
+    }
+    fields.forEach(field => field.addEventListener("animationend", () => field.classList.remove("tick")));
+
+    function celebrate() {
+      if (celebrated) return;
+      celebrated = true;
+      if (reducedMotion.matches) return;
+      const confetti = document.createElement("div");
+      confetti.className = "confetti";
+      confetti.setAttribute("aria-hidden", "true");
+      const colors = ["#7de8ff", "#bf8aff", "#ffd86e", "#ff82be", "#ffffff"];
+      for (let i = 0; i < 64; i++) {
+        const piece = document.createElement("i");
+        piece.style.cssText = `--x:${Math.random() * 100}%;--color:${colors[i % colors.length]};--duration:${3 + Math.random() * 3}s;--delay:${Math.random() * 2}s;--sway:${Math.random() * 160 - 80}px`;
+        confetti.appendChild(piece);
+      }
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 8500);
+    }
+
+    function updateCountdown() {
+      const remaining = target - Date.now();
+      if (remaining <= 0) {
+        fields.forEach(field => { field.textContent = "00"; });
+        document.getElementById("countdown").hidden = true;
+        document.getElementById("status").hidden = true;
+        document.getElementById("welcome").hidden = false;
+        document.title = "WELCOME TO THE EXPO | ICT EXPO 2026";
+        clearTimeout(timer);
+        celebrate();
+        return;
+      }
+      const total = Math.ceil(remaining / 1000);
+      const values = [Math.floor(total / 86400), Math.floor(total / 3600) % 24,
+                      Math.floor(total / 60) % 60, total % 60];
+      values.forEach((value, index) => {
+        const text = String(value).padStart(2, "0");
+        if (fields[index].textContent !== text) {
+          fields[index].textContent = text;
+          fields[index].classList.add("tick");
+        }
+      });
+      // Recalculate from the clock each time to avoid cumulative drift.
+      timer = setTimeout(updateCountdown, Math.min(1000, remaining));
+    }
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) { clearTimeout(timer); updateCountdown(); }
+    });
+    updateCountdown();
+  </script>
+</body>
+</html>
