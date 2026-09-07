@@ -51,34 +51,42 @@
     body { overflow-x: hidden; isolation: isolate; }
     main, footer { position: relative; z-index: 1; }
     .ambience { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
-    .orb { position: absolute; width: 65vmax; height: 65vmax; border-radius: 50%; opacity: .3; animation: drift 18s ease-in-out infinite alternate; }
+    .orb { position: absolute; width: 65vmax; height: 65vmax; border-radius: 50%; opacity: .3; animation: drift 28s cubic-bezier(.45,0,.55,1) infinite alternate; }
     .orb:first-child { left: -35vmax; top: -25vmax; background: radial-gradient(circle, #159dc2, transparent 65%); }
     .orb:nth-child(2) { right: -35vmax; bottom: -30vmax; background: radial-gradient(circle, #a13bdb, transparent 65%); animation-delay: -9s; }
     .particle { position: absolute; bottom: -20px; left: var(--x); width: var(--size); height: var(--size); border-radius: 50%; background: #83edff; box-shadow: 0 0 12px #83edff; opacity: 0; animation: float-up var(--duration) linear var(--delay) infinite; }
     .expo { animation: arrive 1s ease-out both; }
-    .badge { animation: beacon 4s ease-in-out infinite; }
-    h1 span { background: linear-gradient(110deg, #7de8ff 20%, #fff 45%, #c297ff 60%, #7de8ff 80%); background-size: 250% auto; background-clip: text; -webkit-background-clip: text; color: transparent; animation: shimmer 7s linear infinite; }
-    .unit { position: relative; overflow: hidden; animation: breathe 5s ease-in-out infinite; transition: transform .3s ease, border-color .3s ease; }
-    .unit:nth-child(2) { animation-delay: -.7s; }
-    .unit:nth-child(3) { animation-delay: -1.4s; }
-    .unit:nth-child(4) { animation-delay: -2.1s; }
+    .badge { position: relative; }
+    .badge::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 25px #4ce0ff40; pointer-events: none; animation: glow 6s ease-in-out infinite; }
+    h1 span { background: linear-gradient(110deg, #7de8ff 20%, #fff 45%, #c297ff 60%, #7de8ff 80%); background-size: 250% auto; background-clip: text; -webkit-background-clip: text; color: transparent; animation: title-glow 8s ease-in-out infinite; }
+    .unit { position: relative; overflow: hidden; transition: transform .5s cubic-bezier(.22,1,.36,1); }
+    .unit::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(ellipse at 50% 100%, #63dbff20, transparent 75%); animation: glow 7s ease-in-out infinite; }
+    .unit:nth-child(2)::before { animation-delay: -1s; }
+    .unit:nth-child(3)::before { animation-delay: -2s; }
+    .unit:nth-child(4)::before { animation-delay: -3s; }
     .unit::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 35%, #ffffff10 50%, transparent 65%); transform: translateX(-150%); animation: sweep 8s ease-in-out infinite; }
-    .number.tick { animation: tick .38s ease-out; }
-    #welcome:not([hidden]) { animation: welcome-in .9s cubic-bezier(.2,.8,.2,1) both, breathe 5s 1s ease-in-out infinite; }
+    .number.tick { animation: tick .6s cubic-bezier(.22,1,.36,1); }
+    #welcome:not([hidden]) { animation: welcome-in 1.2s cubic-bezier(.22,1,.36,1) both; }
     #welcome h2 { text-shadow: 0 0 28px #56dfff55; }
     .confetti { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
     .confetti i { position: absolute; top: -24px; left: var(--x); width: 8px; height: 14px; background: var(--color); animation: confetti-fall var(--duration) var(--delay) linear both; }
-    @media (hover: hover) { .unit:hover { transform: translateY(-6px); border-color: #7de8ff99; } }
+    @media (hover: hover) { .unit:hover { transform: translateY(-4px); } }
     @keyframes drift { to { transform: translate(12vw, 12vh) scale(1.15); } }
     @keyframes float-up { 10% { opacity: .5; } 85% { opacity: .35; } to { transform: translate(40px, -110vh); opacity: 0; } }
     @keyframes arrive { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes beacon { 50% { box-shadow: 0 0 25px #4ce0ff25; border-color: #6de8ffaa; } }
-    @keyframes shimmer { to { background-position: -250% center; } }
-    @keyframes breathe { 50% { box-shadow: 0 0 30px #63dbff1c; border-color: #9bdfff65; } }
+    @keyframes glow { 0%, 100% { opacity: .25; } 50% { opacity: .85; } }
+    @keyframes title-glow { 0%, 100% { opacity: .85; } 50% { opacity: 1; } }
     @keyframes sweep { 0%, 65% { transform: translateX(-150%); } 100% { transform: translateX(150%); } }
-    @keyframes tick { from { opacity: .4; transform: translateY(9px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @keyframes welcome-in { from { opacity: 0; transform: scale(.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes tick { from { opacity: .75; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes welcome-in { from { opacity: 0; transform: scale(.98) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     @keyframes confetti-fall { to { transform: translate(var(--sway), 110vh) rotate(720deg); } }
+    .motion-paused *, .motion-paused *::before, .motion-paused *::after { animation-play-state: paused !important; }
+    @media (max-width: 520px) {
+      .orb { width: 90vw; height: 90vw; }
+      .orb:first-child { left: -45vw; top: -20vw; }
+      .orb:nth-child(2) { right: -45vw; bottom: -20vw; }
+      .unit::after { animation: none; opacity: 0; }
+    }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
       .particle, .confetti { display: none; }
@@ -93,7 +101,7 @@
       <h1 id="title">ICT EXPO <span>2026</span></h1>
       <p class="intro">The countdown to a world of possibilities.</p>
       <p class="date">
-        <time datetime="2026-09-08T09:00:00+05:30">Tuesday, 8 September 2026 · 9:00 AM</time><br>
+        <time datetime="2026-09-09T09:00:00+05:30">Wednesday, 9 September 2026 · 9:00 AM</time><br>
         <small>Sri Lanka Time (UTC+05:30)</small>
       </p>
       <div id="countdown" class="countdown" role="timer" aria-label="Time remaining until ICT EXPO 2026" aria-live="off">
@@ -115,16 +123,18 @@
   <footer>Developed by <strong>Hirunthakan</strong> for ICT EXPO 2K26</footer>
   <script>
     // Fixed Sri Lanka time: independent of the visitor's time zone.
-    const target = new Date("2026-09-08T09:00:00+05:30").getTime();
+    const target = new Date("2026-09-09T09:00:00+05:30").getTime();
     const fields = ["days", "hours", "minutes", "seconds"].map(id => document.getElementById(id));
     let timer;
     let celebrated = false;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const ambience = document.querySelector(".ambience");
-    for (let i = 0; i < 22; i++) {
+    const mobileMotion = window.matchMedia("(max-width: 520px)");
+    const particleCount = reducedMotion.matches ? 0 : (mobileMotion.matches ? 10 : 18);
+    for (let i = 0; i < particleCount; i++) {
       const dot = document.createElement("span");
       dot.className = "particle";
-      dot.style.cssText = `--x:${Math.random() * 100}%;--size:${2 + Math.random() * 3}px;--duration:${12 + Math.random() * 16}s;--delay:-${Math.random() * 28}s`;
+      dot.style.cssText = `--x:${Math.random() * 100}%;--size:${2 + Math.random() * 3}px;--duration:${20 + Math.random() * 16}s;--delay:-${Math.random() * 28}s`;
       ambience.appendChild(dot);
     }
     fields.forEach(field => field.addEventListener("animationend", () => field.classList.remove("tick")));
@@ -137,7 +147,7 @@
       confetti.className = "confetti";
       confetti.setAttribute("aria-hidden", "true");
       const colors = ["#7de8ff", "#bf8aff", "#ffd86e", "#ff82be", "#ffffff"];
-      for (let i = 0; i < 64; i++) {
+      for (let i = 0; i < (mobileMotion.matches ? 32 : 56); i++) {
         const piece = document.createElement("i");
         piece.style.cssText = `--x:${Math.random() * 100}%;--color:${colors[i % colors.length]};--duration:${3 + Math.random() * 3}s;--delay:${Math.random() * 2}s;--sway:${Math.random() * 160 - 80}px`;
         confetti.appendChild(piece);
@@ -169,10 +179,12 @@
         }
       });
       // Recalculate from the clock each time to avoid cumulative drift.
-      timer = setTimeout(updateCountdown, Math.min(1000, remaining));
+      timer = setTimeout(updateCountdown, (remaining % 1000) || 1000);
     }
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) { clearTimeout(timer); updateCountdown(); }
+      document.body.classList.toggle("motion-paused", document.hidden);
+      clearTimeout(timer);
+      if (!document.hidden) updateCountdown();
     });
     updateCountdown();
   </script>
